@@ -7,8 +7,6 @@
 
 using boost::asio::ip::tcp;
 
-const int max_length = 10;
-
 void session(tcp::socket sock, int number)
 {
 	static std::mt19937 random_engine;
