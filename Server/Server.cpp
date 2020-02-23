@@ -1,20 +1,74 @@
-// Server.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
 
+#include <cstdlib>
 #include <iostream>
+#include <thread>
+#include <boost/asio.hpp>
+#include <random>
 
-int main()
+using boost::asio::ip::tcp;
+
+const int max_length = 10;
+
+void session(tcp::socket sock, int number)
 {
-    std::cout << "Hello World!\n";
+	static std::mt19937 random_engine;
+	static std::uniform_int_distribution<int> random_chars(0, 9);
+
+	try
+	{
+		for (;;)
+		{
+			boost::system::error_code error;
+
+			if (error == boost::asio::error::eof)
+				break; // Connection closed cleanly by peer.
+			else if (error)
+				throw boost::system::system_error(error); // Some other error.
+
+			int message = number * 10 + random_chars(random_engine);
+			std::cout << sock.remote_endpoint().address().to_string() << ":" 
+					  << sock.remote_endpoint().port() << ": " << message << std::endl;
+			
+			boost::asio::write(sock, boost::asio::buffer(&message, sizeof message));
+
+			std::this_thread::sleep_for(std::chrono::seconds(1));
+		}
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << "Exception in thread: " << e.what() << "\n";
+	}
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+void server(boost::asio::io_context& io_context, unsigned short port)
+{
+	int number = 1;
+	tcp::acceptor a(io_context, tcp::endpoint(tcp::v4(), port));
+	for (;;)
+	{
+		std::thread(session, a.accept(), number).detach();
+		number++;
+	}
+}
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+int main(int argc, char* argv[])
+{
+	try
+	{
+		if (argc != 2)
+		{
+			std::cerr << "Usage: blocking_tcp_echo_server <port>\n";
+			return 1;
+		}
+
+		boost::asio::io_context io_context;
+
+		server(io_context, std::atoi(argv[1]));
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << "Exception: " << e.what() << "\n";
+	}
+
+	return 0;
+}
