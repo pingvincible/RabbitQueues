@@ -149,7 +149,7 @@ void BoostConnectionHandler::quit() const
     m_impl_->quit = true;
 }
 
-void BoostConnectionHandler::close()
+void BoostConnectionHandler::close() const
 {
 	m_impl_->socket->close();
 }
