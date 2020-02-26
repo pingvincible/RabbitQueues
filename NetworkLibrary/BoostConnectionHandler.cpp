@@ -85,11 +85,11 @@ struct BoostHandlerImpl
     std::vector<char> tmpBuff;
 };
 
-BoostConnectionHandler::BoostConnectionHandler(boost::asio::io_context& context, const std::string& host, uint16_t port) :
+BoostConnectionHandler::BoostConnectionHandler(boost::asio::io_context& context, const std::string& host, const std::string& port) :
     m_impl_(new BoostHandlerImpl(context))
 {
     tcp::resolver resolver(context);
-    boost::asio::connect(*m_impl_->socket, resolver.resolve(host, std::to_string(port)));
+    boost::asio::connect(*m_impl_->socket, resolver.resolve(host, port));
 }
 
 BoostConnectionHandler::~BoostConnectionHandler()

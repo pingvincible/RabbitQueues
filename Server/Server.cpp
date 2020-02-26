@@ -1,5 +1,3 @@
-
-#include <cstdlib>
 #include <iostream>
 #include <thread>
 #include <boost/asio.hpp>
@@ -14,15 +12,15 @@ void session(tcp::socket sock, int number)
 
 	try
 	{
-		std::cout << "Server application" << std::endl;
 		for (;;)
 		{
 			boost::system::error_code error;
 
 			if (error == boost::asio::error::eof)
 				break; // Connection closed cleanly by peer.
-			else if (error)
-				throw boost::system::system_error(error); // Some other error.
+			if (error)
+				throw boost::system::system_error(error);
+			// Some other error.
 
 			int message = number * 10 + random_chars(random_engine);
 			std::cout << sock.remote_endpoint().address().to_string() << ":" 
@@ -41,12 +39,11 @@ void session(tcp::socket sock, int number)
 
 void server(boost::asio::io_context& io_context, unsigned short port)
 {
-	int number = 1;
+	auto number = 1;
 	tcp::acceptor a(io_context, tcp::endpoint(tcp::v4(), port));
-	for (;;)
+	while(true)
 	{
-		std::thread(session, a.accept(), number).detach();
-		number++;
+		std::thread(session, a.accept(), number++).detach();
 	}
 }
 
@@ -54,6 +51,7 @@ int main(int argc, char* argv[])
 {
 	try
 	{
+		std::cout << "Server application" << std::endl;
 		if (argc != 2)
 		{
 			std::cerr << "Usage: blocking_tcp_echo_server <port>\n";
@@ -61,8 +59,7 @@ int main(int argc, char* argv[])
 		}
 
 		boost::asio::io_context io_context;
-
-		server(io_context, std::atoi(argv[1]));
+		server(io_context, std::stoi(argv[1]));
 	}
 	catch (std::exception& e)
 	{

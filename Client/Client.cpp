@@ -11,9 +11,9 @@ int main(int argc, char* argv[])
     try
     {
         std::cout << "Client application" << std::endl;
-        if (argc != 3)
+        if (argc != 5)
         {
-            std::cerr << "Usage: blocking_tcp_echo_client <host> <port>\n";
+            std::cerr << "Usage: client <server_host> <server_port> <rabbit_host> <rabbit_port>\n";
             return 1;
         }
         
@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
     	tcp::resolver resolver(io_context);
         boost::asio::connect(server_socket, resolver.resolve(argv[1], argv[2]));
 
-        BoostConnectionHandler handler(io_context, "127.0.0.1", 5672);
+        BoostConnectionHandler handler(io_context, argv[3], argv[4]);
         AMQP::Connection connection(&handler, AMQP::Login("guest", "guest"), "/");
         AMQP::Channel channel(&connection);
 

@@ -4,10 +4,16 @@
 #include <iostream>
 #include "BoostConnectionHandler.h"
 
-int main()
+int main(int argc, char* argv[])
 {
+	if (argc != 3)
+	{
+		std::cerr << "Usage: queue <rabbit_host> <rabbit_port>\n";
+		return 1;
+	}
+
 	boost::asio::io_context io_context;
-	BoostConnectionHandler handler(io_context, "localhost", 5672);
+	BoostConnectionHandler handler(io_context, argv[1], argv[2]);
 	std::cout << "Queue application" << std::endl;
 	AMQP::Connection connection(&handler, AMQP::Login("guest", "guest"), "/");
 

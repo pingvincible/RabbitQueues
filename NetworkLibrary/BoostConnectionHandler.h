@@ -14,7 +14,7 @@ public:
     static constexpr size_t buffer_size = 8 * 1024 * 1024; //8Mb
     static constexpr size_t temp_buffer_size = 1024 * 1024; //1Mb
 
-    BoostConnectionHandler(boost::asio::io_context& context, const std::string& host, uint16_t port);
+    BoostConnectionHandler(boost::asio::io_context& context, const std::string& host, const std::string& port);
     ~BoostConnectionHandler();
 
     void loop() const;

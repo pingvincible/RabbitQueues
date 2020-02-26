@@ -83,8 +83,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>D:\Projects\c++\AMQP-CPP\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Projects\c++\AMQP-CPP\build\bin\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Distr\Boost\boost;D:\Projects\c++\AMQP-CPP\include;D:\Projects\c++\RabbitQueues\NetworkLibrary;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Distr\Boost\boost\stage\lib;D:\Projects\c++\AMQP-CPP\build\bin\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
