@@ -14,6 +14,7 @@ void session(tcp::socket sock, int number)
 
 	try
 	{
+		std::cout << "Server application" << std::endl;
 		for (;;)
 		{
 			boost::system::error_code error;
